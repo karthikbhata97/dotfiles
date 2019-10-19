@@ -1,0 +1,6 @@
+pane	crbrics	0	:zsh	1	:*	0	:/home/an0ne/Desktop/ctf/cybrics	1	zsh	:
+pane	oscp	0	:tcpdump	1	:*	0	:/home/an0ne/Desktop/offsec/learn	1	zsh	:
+pane	oscp	0	:tcpdump	1	:*	1	:/home/an0ne/Desktop/offsec/learn	0	zsh	:
+window	crbrics	0	1	:*	c5bd,150x37,0,0,0
+window	oscp	0	1	:*	1765,150x37,0,0[150x18,0,0,1,150x18,0,19,2]
+state	oscp	

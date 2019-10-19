@@ -1,0 +1,3 @@
+pane	cybrics	0	:main	1	:*	0	:/home/an0ne/Desktop/ctf/cybrics	1	bash	:bash
+window	cybrics	0	1	:*	abbd,150x40,0,0,0
+state	cybrics	
