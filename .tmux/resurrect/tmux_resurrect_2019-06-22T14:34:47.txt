@@ -1,7 +1,0 @@
-pane	gctf	0	:r2	0	:	0	:/home/an0ne/Desktop/ctf/gctf	1	r2	:r2 -A MicroServiceDaemonOS
-pane	gctf	1	:gdb	0	:-	0	:/home/an0ne/Desktop/ctf/gctf	1	gdb	:gdb ./MicroServiceDaemonOS
-pane	gctf	2	:man	1	:*	0	:/home/an0ne/Desktop/ctf/gctf	1	man	:man fread
-window	gctf	0	0	:	c5bd,150x37,0,0,0
-window	gctf	1	0	:-	c5be,150x37,0,0,1
-window	gctf	2	1	:*	c5bf,150x37,0,0,2
-state	gctf	

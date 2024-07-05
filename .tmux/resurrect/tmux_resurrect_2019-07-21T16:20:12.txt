@@ -1,5 +1,0 @@
-pane	cybrics	0	:main	1	:*	0	:/home/an0ne/Desktop/ctf/cybrics	1	zsh	:
-pane	cybrics	1	:zsh	0	:-	0	:/home/an0ne/go/src/test	1	zsh	:
-window	cybrics	0	1	:*	abbd,150x40,0,0,0
-window	cybrics	1	0	:-	abbe,150x40,0,0,1
-state	cybrics	
