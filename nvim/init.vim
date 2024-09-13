@@ -61,6 +61,7 @@ nnoremap <leader>q :NERDTreeRefreshRoot<CR>
 " FZF
 nnoremap <leader>ff :FZF<CR>
 nnoremap <leader>fc :Rg<CR>
+let $FZF_DEFAULT_OPTS = '--bind "ctrl-j:down,ctrl-k:up,alt-j:preview-down,alt-k:preview-up"'
 
 " map c-space to auto suggest
 inoremap <C-@> <C-n>
@@ -84,3 +85,7 @@ nnoremap <leader>ff :Files<CR>
 nnoremap <leader>rr :Rg<CR>
 
 set rtp^="/home/an0ne/.opam/chipate/share/ocp-indent/vim"
+
+nnoremap Y yy
+
+set hlsearch
