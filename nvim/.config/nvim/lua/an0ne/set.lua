@@ -18,3 +18,19 @@ vim.keymap.set("x", "<C-k>", ":m '<-2<cr>gv=gv", { noremap = true, silent = true
 vim.keymap.set("x", "p", '"_dP', { noremap = true, silent = true })
 
 vim.opt.ignorecase = true
+
+-- Map leader shortcuts for split navigation
+vim.keymap.set('n', '<leader>h', '<C-w>h', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>j', '<C-w>j', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>k', '<C-w>k', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>l', '<C-w>l', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>w', '<C-w>w', { noremap = true, silent = true }) -- Cycle to the next split
+
+vim.keymap.set('n', '<leader><S-z>', function ()
+    vim.cmd("wincmd =")
+end, { noremap = true, silent = true })
+
+vim.keymap.set('n', '<leader>z', function ()
+    vim.cmd("wincmd |")
+    vim.cmd("wincmd _")
+end, { noremap = true, silent = true })
