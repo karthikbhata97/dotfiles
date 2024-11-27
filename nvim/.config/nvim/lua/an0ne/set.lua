@@ -34,3 +34,7 @@ vim.keymap.set('n', '<leader>z', function ()
     vim.cmd("wincmd |")
     vim.cmd("wincmd _")
 end, { noremap = true, silent = true })
+
+vim.keymap.set('n', '<leader>x', ':cclose<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>r', ':cn<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader><S-r>', ':cp<CR>', { noremap = true, silent = true })

@@ -96,3 +96,15 @@ vim.api.nvim_set_keymap(
   'n', '<Leader>p', ':lua vim.diagnostic.goto_prev()<CR>',
   { noremap = true, silent = true }
 )
+
+
+-- rust analyzer diagnostic hide
+for _, method in ipairs({ 'textDocument/diagnostic', 'workspace/diagnostic' }) do
+    local default_diagnostic_handler = vim.lsp.handlers[method]
+    vim.lsp.handlers[method] = function(err, result, context, config)
+        if err ~= nil and err.code == -32802 then
+            return
+        end
+        return default_diagnostic_handler(err, result, context, config)
+    end
+end
