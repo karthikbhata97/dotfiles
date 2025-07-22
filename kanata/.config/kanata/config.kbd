@@ -1,0 +1,57 @@
+(defcfg 
+process-unmapped-keys yes
+)
+
+(defsrc
+grv
+tab
+caps a s d f h j k l ;
+        b
+rctl
+)
+
+;; (deflayer qwerty
+;; grv
+;; tab
+;; @arw a s d f h j k l ;
+;;         b 
+;; @lay
+;; )
+
+(deflayer qwerty
+grv
+tab
+@arw a @xlctl @xlcmd @xlalt h @xralt @xrcmd @xrctl @xrsft
+        b 
+@lay
+)
+
+(deflayer arrows
+@home
+tab
+caps _ _ _ pgdn left down up right _
+        pgup
+_
+)
+
+(deflayer layers
+@home
+lrld
+_ _ _ _ _ _ _ _ _ _
+    _
+_
+)
+
+(defalias
+home (tap-hold 200 200 grv (layer-switch qwerty))
+lay  (tap-hold-press 200 200 rctl (layer-switch layers))
+arw  (tap-hold 200 200 caps (layer-toggle arrows))
+xlsft (tap-hold-release 200 200 a lsft)
+xlctl (tap-hold-release 200 200 s lctl)
+xlalt (tap-hold-release 200 200 f lalt)
+xlcmd (tap-hold-release 200 200 d lmet)
+xrcmd (tap-hold-release 200 200 k rmet)
+xralt (tap-hold-release 200 200 j ralt)
+xrctl (tap-hold-release 200 200 l rctl)
+xrsft (tap-hold-release 200 200 ; rsft)
+)

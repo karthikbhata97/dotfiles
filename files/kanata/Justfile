@@ -1,0 +1,15 @@
+THIS_DIR := justfile_dir()
+
+help:
+    just --list
+
+setup:
+    sudo cp {{THIS_DIR}}/org.custom.kanata.plist /Library/LaunchDaemons/org.custom.kanata.plist
+    sudo cp {{THIS_DIR}}/org.custom.karabiner.plist /Library/LaunchDaemons/org.custom.karabiner.plist
+
+load:
+    sudo launchctl load /Library/LaunchDaemons/org.custom.karabiner.plist
+    sudo launchctl load /Library/LaunchDaemons/org.custom.kanata.plist
+
+unload:
+    sudo launchctl unload /Library/LaunchDaemons/org.custom.kanata.plist

@@ -38,3 +38,13 @@ end, { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>x', ':cclose<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>r', ':cn<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<leader><S-r>', ':cp<CR>', { noremap = true, silent = true })
+
+-- map <leader>c and <leader>C to toggle between Copilot enable and Copilot disable
+vim.keymap.set('n', '<leader><S-c>', function ()
+    vim.cmd('Copilot disable')
+    vim.cmd('echo \'Copilot disabled\'')
+end, { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>c', function ()
+    vim.cmd('Copilot enable')
+    vim.cmd('echo \'Copilot enable\'')
+end, { noremap = true, silent = true })
