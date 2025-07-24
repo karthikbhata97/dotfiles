@@ -3,23 +3,23 @@ process-unmapped-keys yes
 )
 
 (defsrc
-grv
+grv 1
 tab
 caps a s d f h j k l ;
         b
 rctl
 )
 
-;; (deflayer qwerty
-;; grv
-;; tab
-;; @arw a s d f h j k l ;
-;;         b 
-;; @lay
-;; )
-
 (deflayer qwerty
-grv
+grv 1
+tab
+@arw a s d f h j k l ;
+        b 
+@lay
+)
+
+(deflayer homerowmod
+grv 1
 tab
 @arw a @xlctl @xlcmd @xlalt h @xralt @xrcmd @xrctl @xrsft
         b 
@@ -27,7 +27,7 @@ tab
 )
 
 (deflayer arrows
-@home
+@home 1
 tab
 caps _ _ _ pgdn left down up right _
         pgup
@@ -35,7 +35,7 @@ _
 )
 
 (deflayer layers
-@home
+@home @hmod
 lrld
 _ _ _ _ _ _ _ _ _ _
     _
@@ -45,13 +45,14 @@ _
 (defalias
 home (tap-hold 200 200 grv (layer-switch qwerty))
 lay  (tap-hold-press 200 200 rctl (layer-switch layers))
+hmod  (tap-hold 200 200 1 (layer-switch homerowmod))
 arw  (tap-hold 200 200 caps (layer-toggle arrows))
-xlsft (tap-hold-release 200 200 a lsft)
-xlctl (tap-hold-release 200 200 s lctl)
-xlalt (tap-hold-release 200 200 f lalt)
-xlcmd (tap-hold-release 200 200 d lmet)
-xrcmd (tap-hold-release 200 200 k rmet)
-xralt (tap-hold-release 200 200 j ralt)
-xrctl (tap-hold-release 200 200 l rctl)
-xrsft (tap-hold-release 200 200 ; rsft)
+xlsft (tap-hold-release-timeout 200 300 a lsft a)
+xlctl (tap-hold-release-timeout 200 300 s lctl s)
+xlalt (tap-hold-release-timeout 200 300 f lalt f)
+xlcmd (tap-hold-release-timeout 200 300 d lmet d)
+xrcmd (tap-hold-release-timeout 200 300 k rmet k)
+xralt (tap-hold-release-timeout 200 300 j ralt j)
+xrctl (tap-hold-release-timeout 200 300 l rctl l)
+xrsft (tap-hold-release-timeout 200 300 ; rsft ;)
 )
