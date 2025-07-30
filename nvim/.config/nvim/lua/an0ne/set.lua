@@ -25,9 +25,12 @@ vim.keymap.set('n', '<leader>j', '<C-w>j', { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>k', '<C-w>k', { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>l', '<C-w>l', { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>w', '<C-w>w', { noremap = true, silent = true }) -- Cycle to the next split
-vim.keymap.set('n', '<leader>v', '<C-w>v', { noremap = true, silent = true }) -- Vertical split
-vim.keymap.set('n', '<leader>s', '<C-w>s', { noremap = true, silent = true }) -- Horizontal split
+vim.keymap.set('n', '<leader>v',  function() vim.cmd("vsplit | wincmd l") end, { noremap = true, silent = true }) -- Vertical split
+vim.keymap.set('n', '<leader>s',  function() vim.cmd("split | wincmd j") end, { noremap = true, silent = true }) -- Vertical split
+vim.keymap.set('n', '<leader><', function() vim.cmd("vertical-resize -10") end, { noremap = true, silent = true }) -- Equalize split sizes
+vim.keymap.set('n', '<leader>>', function() vim.cmd("vertical-resize +10") end, { noremap = true, silent = true }) -- Equalize split sizes
 vim.keymap.set('t', '<C-[>', '<C-\\><C-n>', { noremap = true, silent = true }) -- Exit terminal mode
+vim.keymap.set('t', '<leader>w', function() vim.cmd("wincmd w") end, { noremap = true, silent = true }) -- Exit terminal mode
 
 
 vim.keymap.set('n', '<leader><S-z>', function ()
@@ -52,3 +55,42 @@ vim.keymap.set('n', '<leader>c', function ()
     vim.cmd('Copilot enable')
     vim.cmd('echo \'Copilot enable\'')
 end, { noremap = true, silent = true })
+
+vim.api.nvim_create_autocmd({"VimEnter"}, {
+    callback = function()
+        if vim.fn.argc() == 0 then
+            vim.cmd("vsplit")
+            vim.cmd("terminal")
+            vim.cmd("wincmd l")
+        end
+    end
+})
+
+vim.api.nvim_create_autocmd({"WinEnter"}, {
+    callback = function()
+        -- If the current window is a terminal, enter insert mode
+        if vim.api.nvim_get_option_value('buftype', {buf = 0}) == 'terminal' then
+            vim.cmd("startinsert")
+        end
+    end
+})
+
+vim.keymap.set('n', '<leader>q', ':wincmd p<CR>', { noremap = true, silent = true })
+vim.keymap.set('t', '<leader>q', function() vim.cmd("wincmd p") end, { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>m', vim.lsp.buf.rename, { noremap = true, silent = true })
+vim.api.nvim_create_user_command('Rename', 'lua vim.lsp.buf.rename()', { desc = 'Rename symbol under cursor' })
+
+-- allow ":" in expand('<cfile>')
+vim.opt.isfname:append(':')
+
+-- remap gf to smart behavior
+vim.keymap.set('n', 'gf', function()
+  local f = vim.fn.expand('<cfile>')           -- e.g. "foo/bar.rs:123"
+  local name, lnum = f:match('^(.*):(%d+)')    -- try to split off :NUM
+  if name and lnum then
+    -- open the file…
+    vim.cmd('edit +' .. lnum .. ' ' .. name)
+  else
+    vim.cmd('edit ' .. f)
+  end
+end, { silent = true })
