@@ -27,8 +27,8 @@ vim.keymap.set('n', '<leader>l', '<C-w>l', { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>w', '<C-w>w', { noremap = true, silent = true }) -- Cycle to the next split
 vim.keymap.set('n', '<leader>v',  function() vim.cmd("vsplit | wincmd l") end, { noremap = true, silent = true }) -- Vertical split
 vim.keymap.set('n', '<leader>s',  function() vim.cmd("split | wincmd j") end, { noremap = true, silent = true }) -- Vertical split
-vim.keymap.set('n', '<leader><', function() vim.cmd("vertical-resize -10") end, { noremap = true, silent = true }) -- Equalize split sizes
-vim.keymap.set('n', '<leader>>', function() vim.cmd("vertical-resize +10") end, { noremap = true, silent = true }) -- Equalize split sizes
+vim.keymap.set('n', '<A-,>', function() vim.cmd("vertical-resize -10") end, { noremap = true, silent = true }) -- Equalize split sizes
+vim.keymap.set('n', '<A-.>', function() vim.cmd("vertical-resize +10") end, { noremap = true, silent = true }) -- Equalize split sizes
 vim.keymap.set('t', '<C-[>', '<C-\\><C-n>', { noremap = true, silent = true }) -- Exit terminal mode
 vim.keymap.set('t', '<leader>w', function() vim.cmd("wincmd w") end, { noremap = true, silent = true }) -- Exit terminal mode
 
@@ -61,6 +61,9 @@ vim.api.nvim_create_autocmd({"VimEnter"}, {
         if vim.fn.argc() == 0 then
             vim.cmd("vsplit")
             vim.cmd("terminal")
+            vim.cmd("vertical-resize 80")
+            DefaultTerminalJob = vim.bo.channel
+            DefaultTerminalWin = vim.api.nvim_get_current_win()
             vim.cmd("wincmd l")
         end
     end
@@ -75,8 +78,8 @@ vim.api.nvim_create_autocmd({"WinEnter"}, {
     end
 })
 
-vim.keymap.set('n', '<leader>q', ':wincmd p<CR>', { noremap = true, silent = true })
-vim.keymap.set('t', '<leader>q', function() vim.cmd("wincmd p") end, { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>q', GotoPrevWindow, { noremap = true, silent = true })
+vim.keymap.set('t', '<leader>q', GotoPrevWindow, { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>m', vim.lsp.buf.rename, { noremap = true, silent = true })
 vim.api.nvim_create_user_command('Rename', 'lua vim.lsp.buf.rename()', { desc = 'Rename symbol under cursor' })
 
