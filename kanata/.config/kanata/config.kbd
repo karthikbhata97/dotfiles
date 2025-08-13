@@ -3,43 +3,49 @@ process-unmapped-keys yes
 )
 
 (defsrc
-grv 1
-tab
-caps a s d f h j k l ;
-        b
-rctl
+    esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12
+    grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
+    tab  q    w    e    r    t    y    u    i    o    p    [    ]
+    caps a    s    d    f    g    h    j    k    l    ;    '    \    ret
+    lsft z    x    c    v    b    n    m    ,    .    /    rsft
+;;    fn   lctl lalt lmet           spc            rmet ralt
 )
 
 (deflayer qwerty
-grv 1
-tab
-@arw a s d f h j k l ;
-        b 
-@lay
+    esc  🔅   🔆    ✗    ✗    ✗    ✗    ◀◀   ▶⏸   ▶▶   🔇   🔉   🔊
+    grv 1    2    3    4    5    6    7    8    9    0    -    =    bspc
+    tab  q    w    e    r    t    y    u    i    o    p    [    ]
+    caps a    s    d    f    g    h    j    k    l    ;    '    \    ret
+    lsft z    x    c    v    b    n    m    ,    .    @lay    rsft
+;;    fn   lctl lalt lmet           spc            rmet ralt
 )
 
 (deflayer homerowmod
-grv 1
-tab
-@arw a @xlctl @xlcmd @xlalt h @xralt @xrcmd @xrctl @xrsft
-        b 
-@lay
+    esc  🔅   🔆    ✗    ✗    ✗    ✗    ◀◀   ▶⏸   ▶▶   🔇   🔉   🔊
+    grv 1    2    3    4    5    6    7    8    9    0    -    =    bspc
+    tab  q    w    e    r    t    y    u    i    o    p    [    ]
+    @arw @xlsft    @xlctl    @xlcmd    @xlalt    g    h    @xralt    @xrcmd    @xrctl    @xrsft    '    \    ret
+    lsft z    x    c    v    b    n    m    ,    .    @lay    rsft
+;;    fn   lctl lalt lmet           spc            rmet ralt
 )
 
 (deflayer arrows
-@home 1
-tab
-caps _ _ _ pgdn left down up right _
-        pgup
-_
+    esc  🔅   🔆    ✗    ✗    ✗    ✗    ◀◀   ▶⏸   ▶▶   🔇   🔉   🔊
+    @home 1    2    3    4    5    6    7    8    9    0    -    =    bspc
+    tab  @a1    @a2    @a3    @a4    @a5    y    u    i    o    p    [    ]
+    caps a    s    d    pgdn    g    left    down    up    right    ;    '    \    ret
+    lsft z    x    c    v    pgup    n    m    ,    .    /    rsft
+;;    fn   lctl lalt lmet           spc            rmet ralt
 )
 
+
 (deflayer layers
-@home @hmod
-lrld
-_ _ _ _ _ _ _ _ _ _
-    _
-_
+    esc  🔅   🔆    ✗    ✗    ✗    ✗    ◀◀   ▶⏸   ▶▶   🔇   🔉   🔊
+    @home @hmod    2    3    4    5    6    7    8    9    0    -    =    bspc
+    lrld  q    w    e    r    t    y    u    i    o    p    [    ]
+    caps a    s    d    f    g    h    j    k    l    ;    '    \    ret
+    lsft z    x    c    v    b    n    m    ,    .    /    rsft
+;;    fn   lctl lalt lmet           spc            rmet ralt
 )
 
 (defalias
@@ -55,4 +61,9 @@ xrcmd (tap-hold 300 300 k rmet)
 xralt (tap-hold 300 300 j ralt)
 xrctl (tap-hold 300 300 l rctl)
 xrsft (tap-hold 300 300 ; rsft)
+a1 A-f1
+a2 A-f2
+a3 A-f3
+a4 A-f4
+a5 A-f5
 )

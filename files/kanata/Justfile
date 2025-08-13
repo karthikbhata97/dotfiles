@@ -7,9 +7,14 @@ setup:
     sudo cp {{THIS_DIR}}/org.custom.kanata.plist /Library/LaunchDaemons/org.custom.kanata.plist
     sudo cp {{THIS_DIR}}/org.custom.karabiner.plist /Library/LaunchDaemons/org.custom.karabiner.plist
 
-load:
+load: load-kanata
     sudo launchctl load /Library/LaunchDaemons/org.custom.karabiner.plist
+
+load-kanata:
     sudo launchctl load /Library/LaunchDaemons/org.custom.kanata.plist
 
 unload:
     sudo launchctl unload /Library/LaunchDaemons/org.custom.kanata.plist
+
+check:
+    kanata --check -c {{THIS_DIR}}/../../kanata/.config/kanata/config.kbd
