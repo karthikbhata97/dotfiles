@@ -78,8 +78,14 @@ vim.api.nvim_create_autocmd({"WinEnter"}, {
     end
 })
 
-vim.keymap.set('n', '<leader>q', GotoPrevWindow, { noremap = true, silent = true })
-vim.keymap.set('t', '<leader>q', GotoPrevWindow, { noremap = true, silent = true })
+local function open_term()
+    vim.cmd("split | wincmd j | terminal")
+    -- vim.cmd("vertical-resize 80")
+    vim.cmd("startinsert")
+end
+
+vim.keymap.set({'n', 't'}, '<leader>q', GotoPrevWindow, { noremap = true, silent = true })
+vim.keymap.set({'n', 't'}, '<leader>t', open_term, { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>m', vim.lsp.buf.rename, { noremap = true, silent = true })
 vim.api.nvim_create_user_command('Rename', 'lua vim.lsp.buf.rename()', { desc = 'Rename symbol under cursor' })
 

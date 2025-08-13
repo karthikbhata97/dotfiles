@@ -50,7 +50,7 @@ process-unmapped-keys yes
 
 (defalias
 home (tap-hold 200 200 grv (layer-switch qwerty))
-lay  (tap-hold-press 200 200 rctl (layer-switch layers))
+lay  (tap-hold-press 200 200 / (layer-switch layers))
 hmod  (tap-hold 200 200 1 (layer-switch homerowmod))
 arw  (tap-hold 200 200 caps (layer-toggle arrows))
 xlsft (tap-hold 300 300 a lsft)
