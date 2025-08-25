@@ -22,6 +22,12 @@ function GotoPrevWindow()
     prev_window = current_window
 end
 
+vim.api.nvim_create_autocmd({"WinEnter"}, {
+    callback = function()
+        prev_window = vim.api.nvim_get_current_win()
+    end
+})
+
 
 require("an0ne")
 require("config.lazy")
