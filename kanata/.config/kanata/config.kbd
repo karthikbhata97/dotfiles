@@ -34,7 +34,7 @@ process-unmapped-keys yes
     @home 1    2    3    4    5    6    7    8    9    0    -    =    bspc
     tab  @a1    @a2    @a3    @a4    @a5    y    u    i    o    p    [    ]
     caps a    s    d    pgdn    g    left    down    up    right    ;    '    \    ret
-    lsft z    x    c    v    pgup    n    m    ,    .    /    rsft
+    lsft @a6    x    c    v    pgup    n    m    ,    .    /    rsft
 ;;    fn   lctl lalt lmet           spc            rmet ralt
 )
 
@@ -50,7 +50,7 @@ process-unmapped-keys yes
 
 (defalias
 home (tap-hold 200 200 grv (layer-switch qwerty))
-lay  (tap-hold-press 200 200 / (layer-switch layers))
+lay  (tap-hold 1000 1000 / (layer-switch layers))
 hmod  (tap-hold 200 200 1 (layer-switch homerowmod))
 arw  (tap-hold 200 200 caps (layer-toggle arrows))
 xlsft (tap-hold 300 300 a lsft)
@@ -66,4 +66,5 @@ a2 A-f2
 a3 A-f3
 a4 A-f4
 a5 A-f5
+a6 A-f6
 )
