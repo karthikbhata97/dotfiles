@@ -20,24 +20,30 @@ vim.keymap.set("x", "p", '"_dP', { noremap = true, silent = true })
 vim.opt.ignorecase = true
 
 -- Map leader shortcuts for split navigation
-vim.keymap.set('n', '<leader>h', '<C-w>h', { noremap = true, silent = true })
-vim.keymap.set('n', '<leader>j', '<C-w>j', { noremap = true, silent = true })
-vim.keymap.set('n', '<leader>k', '<C-w>k', { noremap = true, silent = true })
-vim.keymap.set('n', '<leader>l', '<C-w>l', { noremap = true, silent = true })
-vim.keymap.set('n', '<leader>w', '<C-w>w', { noremap = true, silent = true }) -- Cycle to the next split
-vim.keymap.set('n', '<leader>v',  function() vim.cmd("vsplit | wincmd l") end, { noremap = true, silent = true }) -- Vertical split
-vim.keymap.set('n', '<leader>s',  function() vim.cmd("split | wincmd j") end, { noremap = true, silent = true }) -- Vertical split
-vim.keymap.set('n', '<A-,>', function() vim.cmd("vertical-resize -10") end, { noremap = true, silent = true }) -- Equalize split sizes
-vim.keymap.set('n', '<A-.>', function() vim.cmd("vertical-resize +10") end, { noremap = true, silent = true }) -- Equalize split sizes
+vim.keymap.set({'n', 't'}, '<leader>h', function() vim.cmd("wincmd h") end, { noremap = true, silent = true })
+vim.keymap.set({'n', 't'}, '<leader>j', function() vim.cmd("wincmd j") end, { noremap = true, silent = true })
+vim.keymap.set({'n', 't'}, '<leader>k', function() vim.cmd("wincmd k") end, { noremap = true, silent = true })
+vim.keymap.set({'n', 't'}, '<leader>l', function() vim.cmd("wincmd l") end, { noremap = true, silent = true })
+vim.keymap.set({'n', 't'}, '<leader>w', '<C-w>w', { noremap = true, silent = true }) -- Cycle to the next split
+vim.keymap.set({'n', 't'}, '<leader>v',  function() vim.cmd("vsplit | wincmd l") end, { noremap = true, silent = true }) -- Vertical split
+vim.keymap.set({'n', 't'}, '<leader>s',  function() vim.cmd("split | wincmd j") end, { noremap = true, silent = true }) -- Vertical split
+vim.keymap.set({'n', 't'}, '<A-,>', function() vim.cmd("vertical-resize -10") end, { noremap = true, silent = true }) -- Equalize split sizes
+vim.keymap.set({'n', 't'}, '<A-.>', function() vim.cmd("vertical-resize +10") end, { noremap = true, silent = true }) -- Equalize split sizes
 vim.keymap.set('t', '<C-[>', '<C-\\><C-n>', { noremap = true, silent = true }) -- Exit terminal mode
 vim.keymap.set('t', '<leader>w', function() vim.cmd("wincmd w") end, { noremap = true, silent = true }) -- Exit terminal mode
 
+-- vim.api.nvim_create_autocmd('TermOpen', {
+--     pattern = '*',
+--     callback = function(ev)
+--         vim.keymap.set('n', 'q', ':startinsert<CR>', { buffer = ev.buf, noremap = true })
+--     end
+-- })
 
-vim.keymap.set('n', '<leader><S-z>', function ()
+vim.keymap.set({'n', 't'}, '<leader><S-z>', function ()
     vim.cmd("wincmd =")
 end, { noremap = true, silent = true })
 
-vim.keymap.set('n', '<leader>z', function ()
+vim.keymap.set({'n', 't'}, '<leader>z', function ()
     vim.cmd("wincmd |")
     vim.cmd("wincmd _")
 end, { noremap = true, silent = true })
@@ -95,11 +101,17 @@ vim.opt.isfname:append(':')
 -- remap gf to smart behavior
 vim.keymap.set('n', 'gf', function()
   local f = vim.fn.expand('<cfile>')           -- e.g. "foo/bar.rs:123"
-  local name, lnum = f:match('^(.*):(%d+)')    -- try to split off :NUM
-  if name and lnum then
+  local name, lnum, lcol = f:match('^(.*):(%d+):(%d+)')    -- try to split off :NUM
+  if name and lnum and lcol then
     -- open the file…
     vim.cmd('edit +' .. lnum .. ' ' .. name)
   else
-    vim.cmd('edit ' .. f)
+    local name, lnum = f:match('^(.*):(%d+)')
+    if name and lnum then
+        vim.cmd('edit +' .. lnum .. ' ' .. name)
+    else
+        vim.cmd('edit ' .. f)
+    end
   end
 end, { silent = true })
+
