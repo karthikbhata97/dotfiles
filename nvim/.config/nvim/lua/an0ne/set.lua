@@ -27,26 +27,19 @@ vim.keymap.set({'n', 't'}, '<leader>l', function() vim.cmd("wincmd l") end, { no
 vim.keymap.set({'n', 't'}, '<leader>w', '<C-w>w', { noremap = true, silent = true }) -- Cycle to the next split
 vim.keymap.set({'n', 't'}, '<leader>v',  function() vim.cmd("vsplit | wincmd l") end, { noremap = true, silent = true }) -- Vertical split
 vim.keymap.set({'n', 't'}, '<leader>s',  function() vim.cmd("split | wincmd j") end, { noremap = true, silent = true }) -- Vertical split
-vim.keymap.set({'n', 't'}, '<A-,>', function() vim.cmd("vertical-resize -10") end, { noremap = true, silent = true }) -- Equalize split sizes
-vim.keymap.set({'n', 't'}, '<A-.>', function() vim.cmd("vertical-resize +10") end, { noremap = true, silent = true }) -- Equalize split sizes
+vim.keymap.set({'n'}, '<A-,>', function() vim.cmd("vertical-resize -10") end, { noremap = true, silent = true }) -- Equalize split sizes
+vim.keymap.set({'n'}, '<A-.>', function() vim.cmd("vertical-resize +10") end, { noremap = true, silent = true }) -- Equalize split sizes
 vim.keymap.set('t', '<C-[>', '<C-\\><C-n>', { noremap = true, silent = true }) -- Exit terminal mode
 vim.keymap.set('t', '<leader>w', function() vim.cmd("wincmd w") end, { noremap = true, silent = true }) -- Exit terminal mode
 
--- vim.api.nvim_create_autocmd('TermOpen', {
---     pattern = '*',
---     callback = function(ev)
---         vim.keymap.set('n', 'q', ':startinsert<CR>', { buffer = ev.buf, noremap = true })
---     end
--- })
-
-vim.keymap.set({'n', 't'}, '<leader><S-z>', function ()
-    vim.cmd("wincmd =")
-end, { noremap = true, silent = true })
-
-vim.keymap.set({'n', 't'}, '<leader>z', function ()
-    vim.cmd("wincmd |")
-    vim.cmd("wincmd _")
-end, { noremap = true, silent = true })
+-- vim.keymap.set({'n', 't'}, '<leader><S-z>', function ()
+--     vim.cmd("wincmd =")
+-- end, { noremap = true, silent = true })
+-- 
+-- vim.keymap.set({'n', 't'}, '<leader>z', function ()
+--     vim.cmd("wincmd |")
+--     vim.cmd("wincmd _")
+-- end, { noremap = true, silent = true })
 
 vim.keymap.set('n', '<leader>x', ':cclose<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>r', ':cn<CR>', { noremap = true, silent = true })
@@ -114,4 +107,51 @@ vim.keymap.set('n', 'gf', function()
     end
   end
 end, { silent = true })
+
+-- Map q in terminal normal mode to switch to terminal insert mode
+-- But this should not affect non-terminal normal mode
+vim.keymap.set('n', 'q', function()
+    if vim.api.nvim_get_option_value('buftype', {buf = 0}) == 'terminal' then
+        print("Switching to terminal insert mode")
+        return "i"
+    else
+        -- Do nothing, keep the default behavior of 'q'
+        return "q"
+    end
+end, { noremap = true, silent = true, expr = true })
+
+-- AI code below
+-- Neovim "zoom" toggle that plays nice across windows per tabpage.
+-- It uses winrestcmd() to capture/restore split sizes.
+local function maximize_current_win()
+  vim.cmd("wincmd |")
+  vim.cmd("wincmd _")
+end
+
+function ToggleZoom()
+  local curwin = vim.api.nvim_get_current_win()
+  local z = vim.t._zoom  -- tabpage-scoped state
+
+  -- If there is an active zoom in this tab
+  if z and z.win and vim.api.nvim_win_is_valid(z.win) then
+    if curwin == z.win then
+      -- Toggling the same window: restore and clear state
+      vim.cmd(z.restore)
+      vim.t._zoom = nil
+      return
+    else
+      -- Another window is currently zoomed: restore it first
+      vim.cmd(z.restore)
+      vim.t._zoom = nil
+      -- then proceed to zoom the current one
+    end
+  end
+
+  -- Capture current split sizes before maximizing
+  local restore = vim.fn.winrestcmd()
+  maximize_current_win()
+  vim.t._zoom = { win = curwin, restore = restore }
+end
+
+vim.keymap.set({"n", "t"}, "<leader>z", ToggleZoom, { desc = "Toggle zoom (maximize/restore) window" })
 
