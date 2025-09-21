@@ -28,25 +28,23 @@ require('mason').setup({})
 require('mason-lspconfig').setup({
   handlers = {
     function(server_name)
-      vim.lsp.start({
-        name = server_name,
-        cmd = vim.lsp.get_server_config(server_name).cmd,
-        root_dir = vim.fs.dirname(vim.fs.find({'package.json', '.git'}, { upward = true })[1]),
-        capabilities = capabilities,
-      })
+        if server_name == "clangd" then
+            return
+        end
+        vim.lsp.config(server_name, {
+            capabilities = capabilities
+        });
+        vim.lsp.enable(server_name);
     end,
-  },
-})
+    }
+});
 
-vim.lsp.config('rust_analyzer', {
-    capabilities = capabilities,
-})
-vim.lsp.config('pyright', {
-    capabilities = capabilities,
-})
+
 vim.lsp.config('clangd', {
     capabilities = capabilities,
-})
+});
+vim.lsp.enable('clangd');
+
 vim.lsp.config('lua_ls', {
     capabilities = capabilities,
     settings = {
