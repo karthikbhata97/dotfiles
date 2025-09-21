@@ -2,15 +2,6 @@
 -- This will avoid an annoying layout shift in the screen
 vim.opt.signcolumn = 'yes'
 
--- Add cmp_nvim_lsp capabilities settings to lspconfig
--- This should be executed before you configure any language server
-local lspconfig_defaults = require('lspconfig').util.default_config
-lspconfig_defaults.capabilities = vim.tbl_deep_extend(
-  'force',
-  lspconfig_defaults.capabilities,
-  require('cmp_nvim_lsp').default_capabilities()
-)
-
 -- This is where you enable features that only work
 -- if there is a language server active in the file
 vim.api.nvim_create_autocmd('LspAttach', {
@@ -31,19 +22,33 @@ vim.api.nvim_create_autocmd('LspAttach', {
   end,
 })
 
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
+
 require('mason').setup({})
 require('mason-lspconfig').setup({
   handlers = {
     function(server_name)
-      require('lspconfig')[server_name].setup({})
+      vim.lsp.start({
+        name = server_name,
+        cmd = vim.lsp.get_server_config(server_name).cmd,
+        root_dir = vim.fs.dirname(vim.fs.find({'package.json', '.git'}, { upward = true })[1]),
+        capabilities = capabilities,
+      })
     end,
   },
 })
 
-require("lspconfig").rust_analyzer.setup({})
-require("lspconfig").pyright.setup({})
-require("lspconfig").clangd.setup({})
-require("lspconfig").lua_ls.setup({
+vim.lsp.config('rust_analyzer', {
+    capabilities = capabilities,
+})
+vim.lsp.config('pyright', {
+    capabilities = capabilities,
+})
+vim.lsp.config('clangd', {
+    capabilities = capabilities,
+})
+vim.lsp.config('lua_ls', {
+    capabilities = capabilities,
     settings = {
         Lua = {
             diagnostics = {
