@@ -88,26 +88,6 @@ vim.keymap.set({'n', 't'}, '<leader>t', open_term, { noremap = true, silent = tr
 vim.keymap.set('n', '<leader>m', vim.lsp.buf.rename, { noremap = true, silent = true })
 vim.api.nvim_create_user_command('Rename', 'lua vim.lsp.buf.rename()', { desc = 'Rename symbol under cursor' })
 
--- allow ":" in expand('<cfile>')
-vim.opt.isfname:append(':')
-
--- remap gf to smart behavior
-vim.keymap.set('n', 'gf', function()
-  local f = vim.fn.expand('<cfile>')           -- e.g. "foo/bar.rs:123"
-  local name, lnum, lcol = f:match('^(.*):(%d+):(%d+)')    -- try to split off :NUM
-  if name and lnum and lcol then
-    -- open the file…
-    vim.cmd('edit +' .. lnum .. ' ' .. name)
-  else
-    local name, lnum = f:match('^(.*):(%d+)')
-    if name and lnum then
-        vim.cmd('edit +' .. lnum .. ' ' .. name)
-    else
-        vim.cmd('edit ' .. f)
-    end
-  end
-end, { silent = true })
-
 -- Map q in terminal normal mode to switch to terminal insert mode
 -- But this should not affect non-terminal normal mode
 vim.keymap.set('n', 'q', function()
