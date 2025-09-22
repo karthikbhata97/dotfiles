@@ -113,3 +113,6 @@ for _, method in ipairs({ 'textDocument/diagnostic', 'workspace/diagnostic' }) d
         return default_diagnostic_handler(err, result, context, config)
     end
 end
+
+-- Switch source header keymap
+vim.api.nvim_set_keymap('n', '<leader>gh', ':LspClangdSwitchSourceHeader<CR>', { noremap = true, silent = true })
