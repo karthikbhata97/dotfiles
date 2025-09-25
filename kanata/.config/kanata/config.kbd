@@ -24,7 +24,7 @@ process-unmapped-keys yes
     esc  🔅   🔆    ✗    ✗    ✗    ✗    ◀◀   ▶⏸   ▶▶   🔇   🔉   🔊
     grv 1    2    3    4    5    6    7    8    9    0    -    =    bspc
     tab  q    w    e    r    t    y    u    i    o    p    [    ]
-    @arw @xlsft    @xlctl    @xlcmd    @xlalt    g    h    @xralt    @xrcmd    @xrctl    @xrsft    '    \    ret
+    @arw @xlsft    @xlctl    @xlalt    @xlcmd    g    h    @xrcmd    @xralt    @xrctl    @xrsft    '    \    ret
     lsft z    x    c    v    b    n    m    ,    .    @lay    rsft
 ;;    fn   lctl lalt lmet           spc            rmet ralt
 )
@@ -55,16 +55,16 @@ hmod  (tap-hold 200 200 1 (layer-switch homerowmod))
 arw  (tap-hold 200 200 caps (layer-toggle arrows))
 xlsft (tap-hold 300 300 a lsft)
 xlctl (tap-hold 300 300 s lctl)
-xlalt (tap-hold 300 300 f lalt)
-xlcmd (tap-hold 300 300 d lmet)
-xrcmd (tap-hold 300 300 k rmet)
-xralt (tap-hold 300 300 j ralt)
+xlalt (tap-hold 300 300 d lalt)
+xlcmd (tap-hold 300 300 f lmet)
+xrcmd (tap-hold 300 300 j rmet)
+xralt (tap-hold 300 300 k ralt)
 xrctl (tap-hold 300 300 l rctl)
 xrsft (tap-hold 300 300 ; rsft)
-a1 A-f1
-a2 A-f2
-a3 A-f3
-a4 A-f4
-a5 A-f5
-a6 A-f6
+a1 M-f1
+a2 M-f2
+a3 M-f3
+a4 M-f4
+a5 M-f5
+a6 M-f6
 )
