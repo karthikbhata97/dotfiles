@@ -33,7 +33,7 @@ process-unmapped-keys yes
     esc  🔅   🔆    ✗    ✗    ✗    ✗    ◀◀   ▶⏸   ▶▶   🔇   🔉   🔊
     grv 1    2    3    4    5    6    7    8    9    0    -    =    bspc
     tab  q    w    e    r    t    y    u    i    o    p    [    ]
-    @arw @xlsft    @xlctl    @xlcmd2    @xlalt2    g    h    @xralt2    @xrcmd2    @xrctl    @xrsft    '    \    ret
+    @arw2 @xlsft    @xlctl    @xlcmd2    @xlalt2    g    h    @xralt2    @xrcmd2    @xrctl    @xrsft    '    \    ret
     lsft z    x    c    v    b    n    m    ,    .    @lay    rsft
 ;;    fn   lctl lalt lmet           spc            rmet ralt
 )
@@ -44,6 +44,15 @@ process-unmapped-keys yes
     tab  @a1    @a2    @a3    @a4    @a5    y    u    i    o    p    [    ]
     caps a    s    d    pgdn    g    left    down    up    right    ;    '    \    ret
     lsft @a6    x    c    v    pgup    n    m    ,    .    /    rsft
+;;    fn   lctl lalt lmet           spc            rmet ralt
+)
+
+(deflayer arrows2
+    esc  🔅   🔆    ✗    ✗    ✗    ✗    ◀◀   ▶⏸   ▶▶   🔇   🔉   🔊
+    @home 1    2    3    4    5    6    7    8    9    0    -    =    bspc
+    tab  @a12    @a22    @a32    @a42    @a52    y    u    i    o    p    [    ]
+    caps a    s    d    pgdn    g    left    down    up    right    ;    '    \    ret
+    lsft @a62    x    c    v    pgup    n    m    ,    .    /    rsft
 ;;    fn   lctl lalt lmet           spc            rmet ralt
 )
 
@@ -63,6 +72,7 @@ lay  (tap-hold 1000 1000 / (layer-switch layers))
 hmod  (tap-hold 200 200 1 (layer-switch homerowmod))
 hmod2  (tap-hold 200 200 1 (layer-switch homerowmod2))
 arw  (tap-hold 200 200 caps (layer-toggle arrows))
+arw2  (tap-hold 200 200 caps (layer-toggle arrows2))
 xlsft (tap-hold 300 300 a lsft)
 xlctl (tap-hold 300 300 s lctl)
 xlalt (tap-hold 300 300 d lalt)
@@ -81,4 +91,10 @@ a3 M-f3
 a4 M-f4
 a5 M-f5
 a6 M-f6
+a12 A-f1
+a22 A-f2
+a32 A-f3
+a42 A-f4
+a52 A-f5
+a62 A-f6
 )
