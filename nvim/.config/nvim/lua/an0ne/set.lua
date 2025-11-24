@@ -135,3 +135,12 @@ end
 
 vim.keymap.set({"n", "t"}, "<leader>z", ToggleZoom, { desc = "Toggle zoom (maximize/restore) window" })
 
+
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = {"c", "rust", "cpp", "python"},
+    callback = function()
+        vim.cmd('highlight ColorColumn guibg=#fa9d9d')
+        vim.opt.colorcolumn = "80"
+    end
+})
+

@@ -26,6 +26,3 @@ require("gruvbox").setup({
 
 -- vim.cmd("colorscheme gruvbox")
 vim.cmd("colorscheme catppuccin")
-vim.cmd('highlight ColorColumn guibg=#e00b0b')
-vim.opt.colorcolumn = "80"
-
