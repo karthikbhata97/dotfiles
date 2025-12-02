@@ -144,3 +144,4 @@ vim.api.nvim_create_autocmd("FileType", {
     end
 })
 
+vim.keymap.set('n', 'gF', '<C-w>gf', { noremap = true, silent = true })
