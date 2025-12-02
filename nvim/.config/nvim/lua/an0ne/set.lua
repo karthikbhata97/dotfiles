@@ -42,7 +42,16 @@ vim.keymap.set('t', '<leader>w', function() vim.cmd("wincmd w") end, { noremap =
 -- end, { noremap = true, silent = true })
 
 vim.keymap.set('n', '<leader>x', ':cclose<CR>', { noremap = true, silent = true })
-vim.keymap.set('n', '<leader>r', ':cn<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>r', function ()
+    -- If the current selected quickfix is last, go to first
+    local qf_list = vim.fn.getqflist()
+    local qf_index = vim.fn.getqflist({idx = 0}).idx
+    if qf_index == #qf_list then
+        vim.cmd('cc 1')
+    else
+        vim.cmd('cnext')
+    end
+end, { noremap = true, silent = true })
 vim.keymap.set('n', '<leader><S-r>', ':cp<CR>', { noremap = true, silent = true })
 
 -- map <leader>c and <leader>C to toggle between Copilot enable and Copilot disable
