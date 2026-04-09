@@ -11,4 +11,7 @@ nvim:
 tmux:
     stow tmux
 
-all: kanata nvim tmux
+claude:
+    stow claude
+
+all: kanata nvim tmux claude
