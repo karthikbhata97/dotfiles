@@ -149,8 +149,18 @@ vim.api.nvim_create_autocmd("FileType", {
     pattern = {"c", "rust", "cpp", "python"},
     callback = function()
         vim.cmd('highlight ColorColumn guibg=#fa9d9d')
-        vim.opt.colorcolumn = "80"
+        vim.opt_local.colorcolumn = "80"
     end
 })
 
 vim.keymap.set('n', 'gF', '<C-w>gf', { noremap = true, silent = true })
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "python", "lua", "c", "rust", "cpp" }, -- add your languages
+  callback = function()
+    vim.opt_local.foldmethod = "expr"
+    vim.opt_local.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+    vim.opt_local.foldtext = ""
+    vim.opt_local.foldlevel = 99
+  end,
+})
