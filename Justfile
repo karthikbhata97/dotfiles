@@ -14,4 +14,10 @@ tmux:
 claude:
     stow claude
 
-all: kanata nvim tmux claude
+zed:
+    stow --no-folding zed
+
+hammerspoon:
+    stow hammerspoon
+
+all: kanata nvim tmux claude zed hammerspoon

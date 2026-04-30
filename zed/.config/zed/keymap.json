@@ -1,0 +1,135 @@
+[
+  {
+    "context": "VimControl && !menu && vim_mode == normal",
+    "bindings": {
+      ", space": ["workspace::SendKeystrokes", ": n o h l enter"],
+      "shift-y": ["workspace::SendKeystrokes", "y y"],
+
+      ", h": "workspace::ActivatePaneLeft",
+      ", j": "workspace::ActivatePaneDown",
+      ", k": "workspace::ActivatePaneUp",
+      ", l": "workspace::ActivatePaneRight",
+      ", w": "workspace::ActivateNextPane",
+      ", q": "workspace::ActivatePreviousPane",
+      ", v": "pane::SplitRight",
+      ", s": "pane::SplitDown",
+      ", z": "workspace::ToggleZoom",
+      "alt-,": "vim::ResizePaneLeft",
+      "alt-.": "vim::ResizePaneRight",
+
+      ", f f": "file_finder::Toggle",
+      ", f g": "pane::DeploySearch",
+      ", tab": "tab_switcher::ToggleAll",
+      ", f w": ["workspace::SendKeystrokes", "y i w cmd-shift-f cmd-v enter"],
+      ", f h": "command_palette::Toggle",
+
+      "K": "editor::Hover",
+      "g d": "editor::GoToDefinition",
+      "g shift-d": "editor::GoToDeclaration",
+      "g i": "editor::GoToImplementation",
+      "g o": "editor::GoToTypeDefinition",
+      "g r": "editor::FindAllReferences",
+      "g s": "editor::ShowSignatureHelp",
+
+      ", m": "editor::Rename",
+      ", g r": "editor::Rename",
+      ", g f": "editor::Format",
+      ", g a": "editor::ToggleCodeActions",
+      ", g h": "editor::SwitchSourceHeader",
+
+      ", d": "editor::Hover",
+      ", n": "editor::GoToDiagnostic",
+      ", p": "editor::GoToPreviousDiagnostic",
+
+      ", t": "workspace::NewCenterTerminal",
+      ", shift-t": "workspace::NewTerminal",
+
+      ", r": "search::SelectNextMatch",
+      ", shift-r": "search::SelectPreviousMatch"
+    }
+  },
+
+  {
+    "context": "Workspace && !Editor && !Terminal && !menu",
+    "bindings": {
+      ", f f": "file_finder::Toggle"
+    }
+  },
+
+  {
+    "context": "VimControl && !menu && Editor && multibuffer && vim_mode == normal",
+    "bindings": {
+      "n": "search::SelectNextMatch",
+      "shift-n": "search::SelectPreviousMatch",
+      ", r": "editor::GoToNextReference",
+      ", shift-r": "editor::GoToPreviousReference",
+      "enter": "editor::OpenExcerpts",
+      ", enter": "editor::OpenExcerptsSplit",
+      ", e": "pane::DeploySearch"
+    }
+  },
+
+  {
+    "context": "VimControl && !menu && vim_mode == visual",
+    "bindings": {
+      "ctrl-j": "editor::MoveLineDown",
+      "ctrl-k": "editor::MoveLineUp",
+      "p": ["vim::Paste", { "preserve_clipboard": true }],
+
+      ", h": "workspace::ActivatePaneLeft",
+      ", j": "workspace::ActivatePaneDown",
+      ", k": "workspace::ActivatePaneUp",
+      ", l": "workspace::ActivatePaneRight"
+    }
+  },
+
+  {
+    "bindings": {
+      "ctrl-space": "project_panel::Toggle",
+      "ctrl-tab": "pane::ActivateNextItem",
+      "ctrl-shift-tab": "pane::ActivatePreviousItem"
+    }
+  },
+
+  {
+    "context": "Terminal",
+    "bindings": {
+      "ctrl-[": "terminal::ToggleViMode",
+
+      ", h": "workspace::ActivatePaneLeft",
+      ", j": "workspace::ActivatePaneDown",
+      ", k": "workspace::ActivatePaneUp",
+      ", l": "workspace::ActivatePaneRight",
+      ", w": "workspace::ActivateNextPane",
+      ", q": "workspace::ActivatePreviousPane",
+
+      ", f f": "file_finder::Toggle",
+      ", f g": "pane::DeploySearch",
+      ", tab": "tab_switcher::ToggleAll",
+      ", f h": "command_palette::Toggle",
+
+      ", t": "workspace::NewCenterTerminal",
+      ", shift-t": "workspace::NewTerminal"
+    }
+  },
+
+  {
+    "context": "Terminal && vi_mode",
+    "bindings": {
+      "q": "terminal::ToggleViMode",
+      "escape": "terminal::ToggleViMode",
+      "backspace": ["workspace::SendKeystrokes", "h"],
+      "shift-v": ["workspace::SendKeystrokes", "0 v $"],
+      "/": "buffer_search::Deploy",
+      "n": "search::SelectNextMatch",
+      "shift-n": "search::SelectPreviousMatch"
+    }
+  },
+
+  {
+    "context": "BufferSearchBar > Editor",
+    "bindings": {
+      "cmd-enter": ["workspace::SendKeystrokes", "enter tab"]
+    }
+  }
+]

@@ -1,0 +1,61 @@
+{
+  "ssh_connections": [
+    {
+      "host": "vutm",
+      "args": [],
+      "projects": [
+        {
+          "paths": [
+            "/home/an0ne/dev/quick-kvm"
+          ]
+        }
+      ]
+    }
+  ],
+  "base_keymap": "VSCode",
+  "cli_default_open_behavior": "existing_window",
+
+  "ui_font_size": 16,
+  "buffer_font_size": 16,
+
+  "vim_mode": true,
+  "vim": {
+    "use_system_clipboard": "always",
+    "use_smartcase_find": true,
+    "toggle_relative_line_numbers": true
+  },
+
+  "tab_size": 4,
+  "hard_tabs": false,
+  "relative_line_numbers": "enabled",
+  "vertical_scroll_margin": 8,
+
+  "search": {
+    "case_sensitive": false
+  },
+
+  "edit_predictions": {
+    "provider": "none"
+  },
+
+  "project_panel": {
+    "dock": "right",
+    "auto_reveal_entries": true,
+    "follow_current_file": true
+  },
+  "outline_panel": { "dock": "right" },
+  "collaboration_panel": { "dock": "right" },
+  "git_panel": { "dock": "right" },
+  "agent": {
+    "dock": "left",
+    "favorite_models": [],
+    "model_parameters": []
+  },
+
+  "languages": {
+    "Python": { "wrap_guides": [80] },
+    "C": { "wrap_guides": [80] },
+    "C++": { "wrap_guides": [80] },
+    "Rust": { "wrap_guides": [80] }
+  }
+}
