@@ -1,11 +1,11 @@
 require("telescope").setup({
+    defaults = {
+        sorting_strategy = "ascending",
+    },
     pickers = {
         buffers = {
             initial_mode = "normal",
         },
-        defaults = {
-            sorting_strategy = "ascending",
-        }
     }
 })
 
@@ -16,4 +16,3 @@ vim.keymap.set('n', '<leader>fb', function() builtin.buffers({sort_mru = true}) 
 vim.keymap.set('n', '<leader><Tab>', function() builtin.buffers({sort_mru = true, ignore_current_buffer = true}) end, { desc = 'Telescope buffers' })
 vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
 vim.keymap.set('n', '<leader>fw', builtin.grep_string, { desc = 'Telescope grep word under cursor' })
-
