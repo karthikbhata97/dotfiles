@@ -24,27 +24,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
 
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
-require('mason').setup({})
-require('mason-lspconfig').setup({
-  handlers = {
-    function(server_name)
-        if server_name == "clangd" then
-            return
-        end
-        vim.lsp.config(server_name, {
-            capabilities = capabilities
-        });
-        vim.lsp.enable(server_name);
-    end,
-    }
-});
-
-
-vim.lsp.config('clangd', {
-    capabilities = capabilities,
-});
-vim.lsp.enable('clangd');
-
 vim.lsp.config('lua_ls', {
     capabilities = capabilities,
     settings = {
@@ -54,7 +33,11 @@ vim.lsp.config('lua_ls', {
             }
         }
     }
-})
+});
+vim.lsp.enable('lua_ls')
+
+require('mason').setup({})
+require('mason-lspconfig').setup({});
 
 local cmp = require('cmp')
 

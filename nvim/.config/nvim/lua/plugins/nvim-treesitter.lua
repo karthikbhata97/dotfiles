@@ -3,14 +3,13 @@ local ts_filetypes = {
     "lua",
     "vim",
     "query",
-    "elixir",
-    "heex",
     "javascript",
     "html",
     "rust",
     "cpp",
     "make",
     "just",
+    "go",
 }
 
 return {
@@ -29,7 +28,7 @@ return {
         })
 
         vim.api.nvim_create_autocmd("FileType", {
-            pattern = { "c", "rust", "cpp", "javascript", "lua" },
+            pattern = { "c", "rust", "cpp", "javascript", "lua", "go", },
             callback = function(args)
                 vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
             end,

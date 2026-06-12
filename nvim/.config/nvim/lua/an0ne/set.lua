@@ -41,7 +41,23 @@ vim.keymap.set('t', '<leader>w', function() vim.cmd("wincmd w") end, { noremap =
 --     vim.cmd("wincmd _")
 -- end, { noremap = true, silent = true })
 
-vim.keymap.set('n', '<leader>x', ':cclose<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>x', function () 
+    -- if QuickFix is open, close it
+    -- else open
+    local qf_open = false
+    for _, win in ipairs(vim.fn.getwininfo()) do
+      if win.quickfix == 1 then
+        qf_open = true
+        break
+      end
+    end
+
+    if qf_open then
+      vim.cmd('cclose')
+    else
+      vim.cmd('copen')
+    end
+end, { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>r', function ()
     -- If the current selected quickfix is last, go to first
     local qf_list = vim.fn.getqflist()
@@ -156,7 +172,7 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.keymap.set('n', 'gF', '<C-w>gf', { noremap = true, silent = true })
 
 vim.api.nvim_create_autocmd("FileType", {
-  pattern = { "python", "lua", "c", "rust", "cpp" }, -- add your languages
+  pattern = { "python", "lua", "c", "rust", "cpp", "go" }, -- add your languages
   callback = function()
     vim.opt_local.foldmethod = "expr"
     vim.opt_local.foldexpr = "v:lua.vim.treesitter.foldexpr()"
