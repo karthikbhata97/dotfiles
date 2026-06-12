@@ -57,3 +57,54 @@ vim.keymap.set('n', '<leader>fb', function() builtin.buffers({sort_mru = true}) 
 vim.keymap.set('n', '<leader><Tab>', function() builtin.buffers({sort_mru = true, ignore_current_buffer = true}) end, { desc = 'Telescope buffers' })
 vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
 vim.keymap.set('n', '<leader>fw', builtin.grep_string, { desc = 'Telescope grep word under cursor' })
+
+-- jj changed-files picker: only files changed in the current working copy (@).
+-- Preview shows the live `jj diff` for the highlighted file.
+local pickers = require("telescope.pickers")
+local finders = require("telescope.finders")
+local previewers = require("telescope.previewers")
+local make_entry = require("telescope.make_entry")
+local from_entry = require("telescope.from_entry")
+local conf = require("telescope.config").values
+
+local function jj_changed_files(opts)
+    opts = opts or {}
+    local root = vim.fn.systemlist({ "jj", "root" })[1]
+    if vim.v.shell_error ~= 0 or not root or root == "" then
+        vim.notify("Not in a jj repo", vim.log.levels.ERROR)
+        return
+    end
+    local files = vim.fn.systemlist({ "jj", "-R", root, "diff", "-r", "@", "--name-only" })
+    if vim.v.shell_error ~= 0 then
+        vim.notify("jj diff failed:\n" .. table.concat(files, "\n"), vim.log.levels.ERROR)
+        return
+    end
+    files = vim.tbl_filter(function(f) return f ~= "" end, files)
+    if #files == 0 then
+        vim.notify("No working-copy changes (jj @)", vim.log.levels.INFO)
+        return
+    end
+
+    opts.cwd = root
+    local diff_previewer = previewers.new_termopen_previewer({
+        title = "JJ Diff",
+        get_command = function(entry)
+            return {
+                "jj", "-R", root, "diff", "-r", "@", "--git", "--color=always",
+                from_entry.path(entry, false),
+            }
+        end,
+    })
+
+    pickers.new(opts, {
+        prompt_title = "JJ Changed Files (working copy @)",
+        finder = finders.new_table({
+            results = files,
+            entry_maker = make_entry.gen_from_file(opts),
+        }),
+        sorter = conf.file_sorter(opts),
+        previewer = diff_previewer,
+    }):find()
+end
+
+vim.keymap.set('n', '<leader>gc', jj_changed_files, { desc = 'Telescope jj changed files (working copy)' })
