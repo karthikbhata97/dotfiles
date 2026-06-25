@@ -82,3 +82,44 @@ capsCaffeinate = hs.caffeinate.watcher.new(function(event)
     end
 end)
 capsCaffeinate:start()
+
+local hyper = {"ctrl", "cmd"}
+
+local function moveWindow(x, w)
+  local win = hs.window.focusedWindow()
+  if not win then return end
+
+  local screen = win:screen()
+  local frame = screen:frame()
+
+  win:setFrame({
+    x = frame.x + frame.w * x,
+    y = frame.y,
+    w = frame.w * w,
+    h = frame.h
+  })
+end
+
+hs.hotkey.bind(hyper, "left", function()
+  moveWindow(0, 1 / 2)
+end)
+
+hs.hotkey.bind(hyper, "right", function()
+  moveWindow(1 / 2, 1 / 2)
+end)
+
+hs.hotkey.bind(hyper, "D", function()
+  moveWindow(0, 1 / 3)
+end)
+
+hs.hotkey.bind(hyper, "G", function()
+  moveWindow(2 / 3, 1 / 3)
+end)
+
+hs.hotkey.bind(hyper, "E", function()
+  moveWindow(0, 2 / 3)
+end)
+
+hs.hotkey.bind(hyper, "T", function()
+  moveWindow(1 / 3, 2 / 3)
+end)
