@@ -1,0 +1,18 @@
+THIS_DIR := justfile_dir()
+
+# Remap Caps Lock -> F18 in pure userspace (no kernel driver, no sudo).
+# Hammerspoon turns F18 into the Caps layer; see hammerspoon/.hammerspoon/init.lua.
+
+help:
+    just --list
+
+setup:
+    cp {{THIS_DIR}}/org.custom.capslock-f18.plist ~/Library/LaunchAgents/org.custom.capslock-f18.plist
+    launchctl bootout gui/$(id -u)/org.custom.capslock-f18 2>/dev/null || true
+    launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/org.custom.capslock-f18.plist
+    # Apply now so it's active before the next login too.
+    hidutil property --set '{"UserKeyMapping":[{"HIDKeyboardModifierMappingSrc":0x700000039,"HIDKeyboardModifierMappingDst":0x70000006D}]}'
+
+unload:
+    launchctl bootout gui/$(id -u)/org.custom.capslock-f18 2>/dev/null || true
+    hidutil property --set '{"UserKeyMapping":[]}'
