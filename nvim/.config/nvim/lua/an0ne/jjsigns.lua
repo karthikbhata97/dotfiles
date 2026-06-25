@@ -1,8 +1,9 @@
 -- jjsigns: gutter change-hints + Zed-style foldable inline diff, backed by jj.
 --
--- It diffs each buffer against its working-copy parent (`@-`) in the current
--- jj repo, so it shows exactly the changes in the current working copy and
--- nothing across commits. Pure-lua, no plugin deps (uses vim.diff + extmarks).
+-- It diffs each buffer against a jj revision in the current repo. By default
+-- that revision is the working-copy parent (`@-`), so it shows exactly the
+-- changes in the current working copy and nothing across commits. Pure-lua, no
+-- plugin deps (uses vim.diff + extmarks).
 
 local M = {}
 local api = vim.api
@@ -13,7 +14,7 @@ local ns_inline = api.nvim_create_namespace("jjsigns_inline") -- folded old-line
 
 local repo_root = nil
 local enabled = false
-local state = {} -- [buf] = { base = {lines}, hunks = {}, expanded = {key=extmark}, timer }
+local state = {} -- [buf] = { base = {lines}, base_rev, source_name, hunks = {}, expanded = {key=extmark}, timer }
 
 local cfg = {
   add = "▎",
@@ -21,6 +22,8 @@ local cfg = {
   delete = "▁",   -- lines removed *below* this line
   topdelete = "▔", -- lines removed at the very top
 }
+
+local default_base_rev = "@-"
 
 ----------------------------------------------------------------------
 -- highlights
@@ -51,29 +54,54 @@ local function should_attach(buf)
   return name:sub(1, #repo_root + 1) == repo_root .. "/"
 end
 
--- Pull the parent (`@-`) version of the file. New/untracked files error out,
--- which we treat as an empty base (the whole buffer reads as "added").
-local function fetch_base(buf, cb)
-  local name = api.nvim_buf_get_name(buf)
+local function source_name(buf)
+  local s = state[buf]
+  return (s and s.source_name) or api.nvim_buf_get_name(buf)
+end
+
+local function repo_path(name)
+  if repo_root and name:sub(1, #repo_root + 1) == repo_root .. "/" then
+    return name:sub(#repo_root + 2)
+  end
+  return name
+end
+
+local function split_lines(text)
+  local lines = vim.split(text or "", "\n", { plain = true })
+  if lines[#lines] == "" then lines[#lines] = nil end -- drop trailing newline
+  return lines
+end
+
+local function fetch_revision(name, rev, empty_on_error, cb)
   vim.system(
-    { "jj", "-R", repo_root, "file", "show", "-r", "@-", name },
+    { "jj", "-R", repo_root, "file", "show", "-r", rev, name },
     { text = true },
     function(res)
       vim.schedule(function()
-        if not api.nvim_buf_is_valid(buf) then return end
-        local base
         if res.code == 0 then
-          base = vim.split(res.stdout or "", "\n", { plain = true })
-          if base[#base] == "" then base[#base] = nil end -- drop trailing newline
+          cb(split_lines(res.stdout), nil)
+        elseif empty_on_error then
+          cb({}, res.stderr)
         else
-          base = {}
+          cb(nil, res.stderr or res.stdout)
         end
-        state[buf] = state[buf] or { expanded = {} }
-        state[buf].base = base
-        if cb then cb() end
       end)
     end
   )
+end
+
+-- Pull the base revision of the file. New/untracked files error out, which we
+-- treat as an empty base (the whole buffer reads as "added").
+local function fetch_base(buf, cb)
+  state[buf] = state[buf] or { expanded = {} }
+  local s = state[buf]
+  local name = source_name(buf)
+  local rev = s.base_rev or default_base_rev
+  fetch_revision(name, rev, true, function(base)
+    if not api.nvim_buf_is_valid(buf) then return end
+    s.base = base
+    if cb then cb() end
+  end)
 end
 
 local function place_sign(buf, lnum, text, hl)
@@ -113,7 +141,7 @@ local function compute(buf)
   if not s or not s.base then return end
   local cur = table.concat(api.nvim_buf_get_lines(buf, 0, -1, false), "\n")
   local base = table.concat(s.base, "\n")
-  local diff = vim.diff(base, cur, { result_type = "indices", algorithm = "histogram" })
+  local diff = vim.diff(base, cur, { result_type = "indices", algorithm = "patience" })
   local hunks = {}
   for _, d in ipairs(diff or {}) do
     local sa, ca, sb, cb = d[1], d[2], d[3], d[4]
@@ -285,8 +313,72 @@ end
 
 function M.refresh()
   local buf = api.nvim_get_current_buf()
-  if should_attach(buf) then
+  if state[buf] and state[buf].source_name then
     fetch_base(buf, function() compute(buf) end)
+  elseif should_attach(buf) then
+    fetch_base(buf, function() compute(buf) end)
+  end
+end
+
+function M.set_base_rev(rev)
+  local buf = api.nvim_get_current_buf()
+  if not should_attach(buf) then
+    vim.notify("jjsigns: current buffer is not in the jj repo", vim.log.levels.WARN)
+    return
+  end
+  state[buf] = state[buf] or { expanded = {} }
+  state[buf].base_rev = (rev and rev ~= "") and rev or default_base_rev
+  fetch_base(buf, function()
+    compute(buf)
+    vim.notify("jjsigns: diffing against " .. state[buf].base_rev, vim.log.levels.INFO)
+  end)
+end
+
+function M.open_revision_diff(base_rev, target_rev)
+  local curbuf = api.nvim_get_current_buf()
+  if not should_attach(curbuf) then
+    vim.notify("jjsigns: current buffer is not in the jj repo", vim.log.levels.WARN)
+    return
+  end
+  if not base_rev or base_rev == "" or not target_rev or target_rev == "" then
+    vim.notify("jjsigns: usage: JjSignsDiff <base-rev> <target-rev>", vim.log.levels.ERROR)
+    return
+  end
+
+  local name = api.nvim_buf_get_name(curbuf)
+  fetch_revision(name, target_rev, false, function(lines, err)
+    if not lines then
+      vim.notify("jjsigns: failed to load " .. target_rev .. ": " .. (err or "unknown error"), vim.log.levels.ERROR)
+      return
+    end
+
+    local buf = api.nvim_create_buf(true, true)
+    local display = string.format("jjsigns://%s..%s/%s", base_rev, target_rev, repo_path(name))
+    pcall(api.nvim_buf_set_name, buf, display)
+    api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+    vim.bo[buf].buftype = "nofile"
+    vim.bo[buf].bufhidden = "wipe"
+    vim.bo[buf].swapfile = false
+    vim.bo[buf].modifiable = false
+    vim.bo[buf].filetype = vim.bo[curbuf].filetype
+    state[buf] = {
+      base_rev = base_rev,
+      target_rev = target_rev,
+      source_name = name,
+      expanded = {},
+    }
+    api.nvim_set_current_buf(buf)
+    fetch_base(buf, function() compute(buf) end)
+  end)
+end
+
+function M.diff_command(args)
+  if #args == 1 then
+    M.set_base_rev(args[1])
+  elseif #args == 2 then
+    M.open_revision_diff(args[1], args[2])
+  else
+    vim.notify("jjsigns: usage: JjSignsDiff <base-rev> [target-rev]", vim.log.levels.ERROR)
   end
 end
 
@@ -329,12 +421,24 @@ function M.setup()
   })
   api.nvim_create_autocmd("ColorScheme", { group = grp, callback = apply_hl })
 
+  api.nvim_create_user_command("JjSignsBase", function(opts)
+    M.set_base_rev(opts.args)
+  end, { nargs = "?", force = true })
+  api.nvim_create_user_command("JjSignsDiff", function(opts)
+    M.diff_command(opts.fargs)
+  end, { nargs = "+", force = true })
+
   local map = vim.keymap.set
-  map("n", "<leader>gp", M.toggle_inline, { desc = "jj: fold/unfold inline diff for hunk" })
-  map("n", "<leader>gP", M.toggle_all, { desc = "jj: fold/unfold all inline diffs" })
-  map("n", "<leader>gr", M.refresh, { desc = "jj: refresh change signs" })
-  map("n", "]h", M.next_hunk, { desc = "jj: next change hunk" })
-  map("n", "[h", M.prev_hunk, { desc = "jj: prev change hunk" })
+  map("n", "<leader>jp", M.toggle_inline, { desc = "jj: fold/unfold inline diff for hunk" })
+  map("n", "<leader>jP", M.toggle_all, { desc = "jj: fold/unfold all inline diffs" })
+  map("n", "<leader>jb", function()
+    vim.ui.input({ prompt = "jj base revision: ", default = default_base_rev }, function(input)
+      if input then M.set_base_rev(input) end
+    end)
+  end, { desc = "jj: set diff base revision" })
+  map("n", "<leader>jr", M.refresh, { desc = "jj: refresh change signs" })
+  map("n", "]w", M.next_hunk, { desc = "jj: next change hunk" })
+  map("n", "[w", M.prev_hunk, { desc = "jj: prev change hunk" })
 
   -- attach buffers already open at startup
   for _, b in ipairs(api.nvim_list_bufs()) do

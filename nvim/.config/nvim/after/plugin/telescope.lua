@@ -107,4 +107,4 @@ local function jj_changed_files(opts)
     }):find()
 end
 
-vim.keymap.set('n', '<leader>gc', jj_changed_files, { desc = 'Telescope jj changed files (working copy)' })
+vim.keymap.set('n', '<leader>jj', jj_changed_files, { desc = 'Telescope jj changed files (working copy)' })
