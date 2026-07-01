@@ -104,6 +104,28 @@ local function fetch_base(buf, cb)
   end)
 end
 
+local compute
+
+local function refresh_buf(buf)
+  fetch_base(buf, function() compute(buf) end)
+end
+
+local function effective_base_rev(buf)
+  local s = state[buf]
+  return (s and s.base_rev) or default_base_rev
+end
+
+local function refresh_all(clear_buffer_bases)
+  for _, buf in ipairs(api.nvim_list_bufs()) do
+    if clear_buffer_bases and state[buf] then
+      state[buf].base_rev = nil
+    end
+    if state[buf] or should_attach(buf) then
+      refresh_buf(buf)
+    end
+  end
+end
+
 local function place_sign(buf, lnum, text, hl)
   if lnum < 1 then lnum = 1 end
   pcall(api.nvim_buf_set_extmark, buf, ns, lnum - 1, 0, {
@@ -136,7 +158,7 @@ local function render_signs(buf)
   end
 end
 
-local function compute(buf)
+compute = function(buf)
   local s = state[buf]
   if not s or not s.base then return end
   local cur = table.concat(api.nvim_buf_get_lines(buf, 0, -1, false), "\n")
@@ -314,23 +336,45 @@ end
 function M.refresh()
   local buf = api.nvim_get_current_buf()
   if state[buf] and state[buf].source_name then
-    fetch_base(buf, function() compute(buf) end)
+    refresh_buf(buf)
   elseif should_attach(buf) then
-    fetch_base(buf, function() compute(buf) end)
+    refresh_buf(buf)
   end
 end
 
+function M.get_default_base_rev()
+  return default_base_rev
+end
+
+function M.get_base_rev(buf)
+  return effective_base_rev(buf or api.nvim_get_current_buf())
+end
+
 function M.set_base_rev(rev)
+  default_base_rev = (rev and rev ~= "") and rev or "@-"
+
+  refresh_all(false)
+
+  vim.notify("jjsigns: default base is " .. default_base_rev, vim.log.levels.INFO)
+end
+
+function M.reset_base_rev()
+  default_base_rev = "@-"
+  refresh_all(true)
+  vim.notify("jjsigns: reset base to @- and refreshed all buffers", vim.log.levels.INFO)
+end
+
+function M.set_buffer_base_rev(rev)
   local buf = api.nvim_get_current_buf()
   if not should_attach(buf) then
     vim.notify("jjsigns: current buffer is not in the jj repo", vim.log.levels.WARN)
     return
   end
   state[buf] = state[buf] or { expanded = {} }
-  state[buf].base_rev = (rev and rev ~= "") and rev or default_base_rev
+  state[buf].base_rev = (rev and rev ~= "") and rev or nil
   fetch_base(buf, function()
     compute(buf)
-    vim.notify("jjsigns: diffing against " .. state[buf].base_rev, vim.log.levels.INFO)
+    vim.notify("jjsigns: buffer base is " .. effective_base_rev(buf), vim.log.levels.INFO)
   end)
 end
 
@@ -424,6 +468,12 @@ function M.setup()
   api.nvim_create_user_command("JjSignsBase", function(opts)
     M.set_base_rev(opts.args)
   end, { nargs = "?", force = true })
+  api.nvim_create_user_command("JjSignsBufferBase", function(opts)
+    M.set_buffer_base_rev(opts.args)
+  end, { nargs = "?", force = true })
+  api.nvim_create_user_command("JjSignsResetBase", function()
+    M.reset_base_rev()
+  end, { force = true })
   api.nvim_create_user_command("JjSignsDiff", function(opts)
     M.diff_command(opts.fargs)
   end, { nargs = "+", force = true })
@@ -435,7 +485,14 @@ function M.setup()
     vim.ui.input({ prompt = "jj base revision: ", default = default_base_rev }, function(input)
       if input then M.set_base_rev(input) end
     end)
-  end, { desc = "jj: set diff base revision" })
+  end, { desc = "jj: set default diff base revision" })
+  map("n", "<leader>jB", function()
+    local buf = api.nvim_get_current_buf()
+    vim.ui.input({ prompt = "jj buffer base revision: ", default = effective_base_rev(buf) }, function(input)
+      if input then M.set_buffer_base_rev(input) end
+    end)
+  end, { desc = "jj: set buffer-only diff base revision" })
+  map("n", "<leader>jR", M.reset_base_rev, { desc = "jj: reset base to @- and refresh all" })
   map("n", "<leader>jr", M.refresh, { desc = "jj: refresh change signs" })
   map("n", "]w", M.next_hunk, { desc = "jj: next change hunk" })
   map("n", "[w", M.prev_hunk, { desc = "jj: prev change hunk" })

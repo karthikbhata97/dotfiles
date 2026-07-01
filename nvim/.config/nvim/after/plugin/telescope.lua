@@ -58,7 +58,7 @@ vim.keymap.set('n', '<leader><Tab>', function() builtin.buffers({sort_mru = true
 vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
 vim.keymap.set('n', '<leader>fw', builtin.grep_string, { desc = 'Telescope grep word under cursor' })
 
--- jj changed-files picker: only files changed in the current working copy (@).
+-- jj changed-files picker: files changed between the jjsigns default base and @.
 -- Preview shows the live `jj diff` for the highlighted file.
 local pickers = require("telescope.pickers")
 local finders = require("telescope.finders")
@@ -66,6 +66,7 @@ local previewers = require("telescope.previewers")
 local make_entry = require("telescope.make_entry")
 local from_entry = require("telescope.from_entry")
 local conf = require("telescope.config").values
+local jjsigns = require("an0ne.jjsigns")
 
 local function jj_changed_files(opts)
     opts = opts or {}
@@ -74,14 +75,15 @@ local function jj_changed_files(opts)
         vim.notify("Not in a jj repo", vim.log.levels.ERROR)
         return
     end
-    local files = vim.fn.systemlist({ "jj", "-R", root, "diff", "-r", "@", "--name-only" })
+    local base_rev = jjsigns.get_default_base_rev()
+    local files = vim.fn.systemlist({ "jj", "-R", root, "diff", "--from", base_rev, "--to", "@", "--name-only" })
     if vim.v.shell_error ~= 0 then
         vim.notify("jj diff failed:\n" .. table.concat(files, "\n"), vim.log.levels.ERROR)
         return
     end
     files = vim.tbl_filter(function(f) return f ~= "" end, files)
     if #files == 0 then
-        vim.notify("No working-copy changes (jj @)", vim.log.levels.INFO)
+        vim.notify("No changes from " .. base_rev .. " to @", vim.log.levels.INFO)
         return
     end
 
@@ -90,14 +92,14 @@ local function jj_changed_files(opts)
         title = "JJ Diff",
         get_command = function(entry)
             return {
-                "jj", "-R", root, "diff", "-r", "@", "--git", "--color=always",
+                "jj", "-R", root, "diff", "--from", base_rev, "--to", "@", "--git", "--color=always",
                 from_entry.path(entry, false),
             }
         end,
     })
 
     pickers.new(opts, {
-        prompt_title = "JJ Changed Files (working copy @)",
+        prompt_title = "JJ Changed Files (" .. base_rev .. "..@)",
         finder = finders.new_table({
             results = files,
             entry_maker = make_entry.gen_from_file(opts),
@@ -107,4 +109,4 @@ local function jj_changed_files(opts)
     }):find()
 end
 
-vim.keymap.set('n', '<leader>jj', jj_changed_files, { desc = 'Telescope jj changed files (working copy)' })
+vim.keymap.set('n', '<leader>jj', jj_changed_files, { desc = 'Telescope jj changed files' })
