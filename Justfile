@@ -15,7 +15,7 @@ tmux:
     stow tmux
 
 claude:
-    stow claude
+    stow --no-folding claude
 
 zed:
     stow --no-folding zed
@@ -37,3 +37,15 @@ cursor:
     tmp_keys=$(mktemp) && jq -s '.[0] as $base | .[1] as $overlay | reduce $overlay[] as $item ($base; map(select(.key != $item.key or ((.when // "") != ($item.when // "")))) + [$item])' "$HOME/Library/Application Support/Cursor/User/keybindings.json" "{{justfile_directory()}}/cursor/keybindings.json" > "$tmp_keys" && mv "$tmp_keys" "$HOME/Library/Application Support/Cursor/User/keybindings.json"
 
 all: kanata nvim tmux claude zed hammerspoon cursor
+
+# NixOS VM: apply ./nixos host config (default: baremin) on the VM itself.
+nixos host="baremin":
+    sudo nixos-rebuild switch --flake "{{justfile_directory()}}/nixos#{{host}}"
+
+nixos-build host="baremin":
+    nixos-rebuild build --flake "{{justfile_directory()}}/nixos#{{host}}"
+
+# Proxmox template image (vzdump .vma.zst) of a host, in ./result-<host>.
+# Needs an x86_64 Linux box with Nix (the Proxmox node or any NixOS VM).
+nixos-image host="baremin":
+    nix --extra-experimental-features "nix-command flakes" build "{{justfile_directory()}}/nixos#nixosConfigurations.{{host}}.config.system.build.VMA" -o "result-{{host}}"
