@@ -13,7 +13,10 @@
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 
   # Defaults for the restored template; change per clone in Proxmox.
-  # Image file is vzdump-qemu-<host>.vma.zst, restored VM is named <host>.
+  # Image file is vzdump-qemu-9999-<host>.vma.zst: Proxmox only treats a
+  # backup as a VM backup when a VMID follows "qemu-". 9999 matches the disk
+  # names nixpkgs bakes in. The restored VM is named <host>.
+  proxmox.filenameSuffix = lib.mkDefault "9999-${host}";
   proxmox.qemuConf = {
     name = lib.mkDefault host;
     bios = "ovmf"; # UEFI, so the shared systemd-boot config works

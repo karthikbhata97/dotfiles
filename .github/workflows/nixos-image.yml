@@ -55,4 +55,8 @@ jobs:
           gh release view "$tag" >/dev/null 2>&1 ||
             gh release create "$tag" --title "Proxmox image: $HOST" --notes "Built from nixos/ by .github/workflows/nixos-image.yml."
           gh release upload "$tag" result/*.vma.zst --clobber
+          # drop images left over under an older file name
+          gh release view "$tag" --json assets -q '.assets[].name' |
+            grep -vxF "$(basename result/*.vma.zst)" |
+            xargs -r -n1 gh release delete-asset "$tag" -y
           gh release edit "$tag" --notes "Built from ${GITHUB_SHA::12} on $(date -u +%F)."

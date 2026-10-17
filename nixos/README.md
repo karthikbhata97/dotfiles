@@ -19,9 +19,9 @@ On the Proxmox node (host shell, or "Shell" in the web UI):
 
 ```sh
 cd /var/lib/vz/dump
-wget -O vzdump-qemu-baremin.vma.zst \
-  https://github.com/karthikbhata97/dotfiles/releases/download/image-baremin/vzdump-qemu-baremin.vma.zst
-qmrestore vzdump-qemu-baremin.vma.zst 9999 --unique true --storage local-lvm
+wget -O vzdump-qemu-9999-baremin.vma.zst \
+  https://github.com/karthikbhata97/dotfiles/releases/download/image-baremin/vzdump-qemu-9999-baremin.vma.zst
+qmrestore vzdump-qemu-9999-baremin.vma.zst 9999 --unique true --storage local-lvm
 qm template 9999
 ```
 
