@@ -1,17 +1,3 @@
-local ts_filetypes = {
-    "c",
-    "lua",
-    "vim",
-    "query",
-    "javascript",
-    "html",
-    "rust",
-    "cpp",
-    "make",
-    "just",
-    "go",
-}
-
 return {
     "nvim-treesitter/nvim-treesitter",
     branch = "main",
@@ -20,6 +6,33 @@ return {
     config = function()
         require("nvim-treesitter").setup({})
 
+        -- installparsers async (no-op if already installed)
+        require("nvim-treesitter").install({
+            "c",
+            "lua",
+            "vim",
+            "vimdoc",
+            "query",
+            "javascript",
+            "html",
+            "rust",
+            "cpp",
+            "make",
+            "go",
+        })
+
+        local ts_filetypes = {
+            "c",
+            "lua",
+            "vim",
+            "query",
+            "javascript",
+            "html",
+            "rust",
+            "cpp",
+            "make",
+            "go",
+        }
         vim.api.nvim_create_autocmd("FileType", {
             pattern = ts_filetypes,
             callback = function(args)
@@ -28,7 +41,7 @@ return {
         })
 
         vim.api.nvim_create_autocmd("FileType", {
-            pattern = { "c", "rust", "cpp", "javascript", "lua", "go", },
+            pattern = { "c", "rust", "cpp", "javascript", "lua", "go" },
             callback = function(args)
                 vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
             end,

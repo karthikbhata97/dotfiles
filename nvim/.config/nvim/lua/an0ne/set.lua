@@ -180,3 +180,6 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.opt_local.foldlevel = 99
   end,
 })
+
+-- function motions (]] / [[) are configured in lua/plugins/nvim-treesitter-textobjects.lua
+-- (must load after lazy.nvim, not here — see init.lua ordering).
