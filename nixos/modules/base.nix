@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 {
   nix.settings = {
@@ -18,6 +18,24 @@
   security.sudo.wheelNeedsPassword = lib.mkDefault false;
 
   programs.fish.enable = true;
+
+  # System-wide defaults in /etc/gitconfig; a user's ~/.gitconfig still wins.
+  programs.git = {
+    enable = true;
+    config = {
+      user.name = lib.mkDefault "Karthik";
+      user.email = lib.mkDefault "karthik.bhata7@gmail.com";
+    };
+  };
+
+  # jj ignores git's identity and has no system-wide config file, so pass the
+  # same identity through its env vars. Unlike /etc/gitconfig these take
+  # precedence over ~/.config/jj/config.toml.
+  environment.variables = {
+    JJ_USER = config.programs.git.config.user.name;
+    JJ_EMAIL = config.programs.git.config.user.email;
+  };
+
   programs.neovim = {
     enable = true;
     defaultEditor = true;
@@ -30,8 +48,7 @@
   programs.nix-ld.enable = true;
 
   environment.systemPackages = with pkgs; [
-    # dotfiles plumbing
-    git
+    # dotfiles plumbing (git comes from programs.git above)
     stow
     just
 
