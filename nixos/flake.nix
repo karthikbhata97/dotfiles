@@ -22,6 +22,8 @@
 
       nixosConfigurations = nixpkgs.lib.genAttrs [
         "baremin"
+        "pocketid"
+        "actualbudget"
         # add specialised hosts here, each with its own ./hosts/<name>/default.nix
       ] mkHost;
     };
