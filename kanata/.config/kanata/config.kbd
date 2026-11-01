@@ -2,12 +2,14 @@
 process-unmapped-keys yes
 )
 
-;; The external keyboard (2.4G Dongle) has Alt next to space and Win beside it,
-;; so swap them there so the key next to space is Cmd on every keyboard.
-;; Device ID 1 below is referenced by the device-history checks in the aliases.
+;; External keyboards are Windows-style (Alt next to space, Win beside it), so swap
+;; Alt/Win on every keyboard except the built-in one, making the key next to space Cmd.
+;; Only the built-in keyboard gets an ID: kanata assigns IDs at startup only, so
+;; keyboards plugged in later (e.g. moving between home and work) are "unknown",
+;; and keying off "not built-in" still swaps them without a restart.
 ;; Matched by USB IDs: kanata 1.12.0 keeps the quotes in (name "...") so it never matches.
 (definputdevices
-  1 ((vendor_id 0x0C45) (product_id 0xFDFD))
+  1 ((vendor_id 0) (product_id 0)) ;; Apple Internal Keyboard
 )
 
 (defsrc
@@ -77,8 +79,8 @@ a6 M-A-f6
 a7 M-A-f7
 a8 M-A-f8
 a9 M-A-f9
-lalt (switch ((device-history 1 1)) lmet break () lalt break)
-lmet (switch ((device-history 1 1)) lalt break () lmet break)
-ralt (switch ((device-history 1 1)) rmet break () ralt break)
-rmet (switch ((device-history 1 1)) ralt break () rmet break)
+lalt (switch ((not (device-history 1 1))) lmet break () lalt break)
+lmet (switch ((not (device-history 1 1))) lalt break () lmet break)
+ralt (switch ((not (device-history 1 1))) rmet break () ralt break)
+rmet (switch ((not (device-history 1 1))) ralt break () rmet break)
 )
